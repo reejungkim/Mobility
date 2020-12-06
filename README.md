@@ -2,4 +2,4 @@
 
 👉 This is a repository to practice geospatial data visualization
 
-👉[Initial source](https://github.com/streamlit/demo-uber-nyc-pickups)
+👉[Initial source](https://deckgl.readthedocs.io/en/latest/index.html)
