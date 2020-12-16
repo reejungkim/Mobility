@@ -6,15 +6,22 @@ Created on Sat Nov 28 00:20:50 2020
 @author: reejungkim
 """
 
-import pydeck
+import os
+from dotenv import load_dotenv
+# .env file to environment
+#load_dotenv()
+load_dotenv(verbose=True)
+token = os.getenv('MAPBOX_API_KEY')
+
+import pydeck as pdk
 import streamlit as st
 
+
 # 2014 locations of car accidents in the UK
-UK_ACCIDENTS_DATA = ('https://raw.githubusercontent.com/uber-common/'
-                     'deck.gl-data/master/examples/3d-heatmap/heatmap-data.csv')
+UK_ACCIDENTS_DATA = ('https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/3d-heatmap/heatmap-data.csv')
 
 # Define a layer to display on a map
-layer = pydeck.Layer(
+layer = pdk.Layer(
     'HexagonLayer',
     UK_ACCIDENTS_DATA,
     get_position='[lng, lat]',
@@ -26,7 +33,7 @@ layer = pydeck.Layer(
     coverage=1)
 
 # Set the viewport location
-view_state = pydeck.ViewState(
+view_state = pdk.ViewState(
     longitude=-1.415,
     latitude=52.2323,
     zoom=6,
@@ -35,13 +42,21 @@ view_state = pydeck.ViewState(
     pitch=40.5,
     bearing=-27.36)
 
+# Combined all of it and render a viewport
+r = pdk.Deck(
+    map_style="mapbox://styles/mapbox/light-v9",
+    layers=[layer],
+    initial_view_state=view_state,
+    tooltip={"html": "<b>Elevation Value:</b> {elevationValue}", "style": {"color": "white"}})
 
+#r = pydeck.Deck(layers=[layer], initial_view_state=view_state)
 
-st.write(pydeck.Deck(layers=[layer], initial_view_state=view_state))
+#st.write(pydeck.Deck(layers=[layer], initial_view_state=view_state))
 
+st.pydeck_chart(r)
 # Render
-r = pydeck.Deck(layers=[layer], initial_view_state=view_state)
-r.to_html('demo.html')
+
+#r.to_html('demo_layer.html')
 
 # Please see the note about using a Mapbox API token here:
 # https://github.com/uber/deck.gl/tree/master/bindings/python/pydeck#mapbox-api-token
