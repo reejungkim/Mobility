@@ -29,7 +29,8 @@ load_dotenv(verbose=True)
 token = os.getenv('MAPBOX_API_KEY')
 
 # SETTING PAGE CONFIG TO WIDE MODE
-st.beta_set_page_config(layout="wide")
+st.set_page_config(layout='wide')
+
 
 # LOADING DATA
 DATE_TIME = "date/time"
@@ -72,7 +73,7 @@ def map(data, lat, lon, zoom):
         ]
     ))
 
-# LAYING OUT THE TOP SECTION OF THE APP
+#LAYING OUT THE TOP SECTION OF THE APP
 row1_1, row1_2 = st.beta_columns((2,3))
 
 
