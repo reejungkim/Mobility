@@ -51,27 +51,26 @@ data = load_data(100000)
 # CREATING FUNCTION FOR MAPS
 
 def map(data, lat, lon, zoom):
-    st.write(pdk.Deck(
-        map_style="mapbox://styles/mapbox/light-v9",
-        initial_view_state={
-            "latitude": lat,
-            "longitude": lon,
-            "zoom": zoom,
-            "pitch": 50,
-        },
-        layers=[
-            pdk.Layer(
-                "HexagonLayer",
-                data=data,
-                get_position=["lon", "lat"],
-                radius=100,
-                elevation_scale=4,
-                elevation_range=[0, 1000],
-                pickable=True,
-                extruded=True,
-            ),
-        ]
-    ))
+    layer= pdk.Layer(
+            "HexagonLayer",
+            data=data,
+            get_position=["lon", "lat"],
+            radius=100,
+            elevation_scale=4,
+            elevation_range=[0, 1000],
+            pickable=True,
+            extruded=True,
+            )
+    view_state = pdk.ViewState(
+        latitude= lat,
+        longitude= lon,
+        zoom= zoom,
+        pitch= 50
+        ) 
+    st.write( pdk.Deck(layers=[layer], initial_view_state=view_state))
+
+        
+    
 
 #LAYING OUT THE TOP SECTION OF THE APP
 row1_1, row1_2 = st.beta_columns((2,3))
@@ -127,20 +126,21 @@ hist = np.histogram(filtered[DATE_TIME].dt.minute, bins=60, range=(0, 60))[0]
 
 chart_data = pd.DataFrame({"minute": range(60), "pickups": hist})
 
+
 # LAYING OUT THE HISTOGRAM SECTION
 
-st.write("")
+# st.write("")
 
-st.write("**Breakdown of rides per minute between %i:00 and %i:00**" % (hour_selected, (hour_selected + 1) % 24))
+# st.write("**Breakdown of rides per minute between %i:00 and %i:00**" % (hour_selected, (hour_selected + 1) % 24))
 
-st.altair_chart(alt.Chart(chart_data)
-    .mark_area(
-        interpolate='step-after',
-    ).encode(
-        x=alt.X("minute:Q", scale=alt.Scale(nice=False)),
-        y=alt.Y("pickups:Q"),
-        tooltip=['minute', 'pickups']
-    ).configure_mark(
-        opacity=0.5,
-        color='red'
-    ), use_container_width=True)
+# st.altair_chart(alt.Chart(chart_data)
+#     .mark_area(
+#         interpolate='step-after',
+#     ).encode(
+#         x=alt.X("minute:Q", scale=alt.Scale(nice=False)),
+#         y=alt.Y("pickups:Q"),
+#         tooltip=['minute', 'pickups']
+#     ).configure_mark(
+#         opacity=0.5,
+#         color='red'
+#     ), use_container_width=True)
