@@ -2,7 +2,7 @@
 
 
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/reejungkim/mobility/main/uber.py)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/reejungkim/mobility/main/app.py)
 
 👉 This is a repository to practice geospatial data visualization
 
