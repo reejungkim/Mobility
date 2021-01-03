@@ -21,6 +21,7 @@ import numpy as np
 import altair as alt
 import pydeck as pdk
 import os
+import time
 
 from dotenv import load_dotenv
 # .env file to environment
@@ -29,7 +30,7 @@ load_dotenv(verbose=True)
 token = os.getenv('MAPBOX_API_KEY')
 
 # SETTING PAGE CONFIG TO WIDE MODE
-st.set_page_config(layout='wide')
+#st.set_page_config(layout='wide')
 
 
 # LOADING DATA
