@@ -22,6 +22,7 @@ import altair as alt
 import pydeck as pdk
 import os
 import time
+import base64
 
 from dotenv import load_dotenv
 # .env file to environment
@@ -39,6 +40,17 @@ DATA_URL = (
     "http://s3-us-west-2.amazonaws.com/streamlit-demo-data/uber-raw-data-sep14.csv.gz"
 )
 
+def get_table_download_link(df):
+    """Generates a link allowing the data in a given panda dataframe to be downloaded
+    in:  dataframe
+    out: href string
+    """
+    csv = df.to_csv(index=False)
+    b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
+    href = f'<a href="data:file/csv;base64,{b64}" download="myfilename.csv">Download data</a>'
+    return href
+
+
 @st.cache(persist=True)
 def load_data(nrows):
     data = pd.read_csv(DATA_URL, nrows=nrows)
@@ -49,30 +61,34 @@ def load_data(nrows):
 
 data = load_data(100000)
 
+# LINK FOR DOWNLOADING DATA
+st.markdown(get_table_download_link(data), unsafe_allow_html=True)
+
+
 # CREATING FUNCTION FOR MAPS
 
 def map(data, lat, lon, zoom):
-    layer= pdk.Layer(
-            "HexagonLayer",
-            data=data,
-            get_position=["lon", "lat"],
-            radius=100,
-            elevation_scale=4,
-            elevation_range=[0, 1000],
-            pickable=True,
-            extruded=True,
-            )
+    layer = pdk.Layer(
+        'HexagonLayer',
+        data,
+        get_position='[lon, lat]',
+        radius = 120,
+        auto_highlight=True,
+        elevation_scale=4,
+        pickable=True,
+        elevation_range=[0, 1000],
+        extruded=True,                 
+        coverage=1)
     view_state = pdk.ViewState(
         latitude= lat,
         longitude= lon,
         zoom= zoom,
         pitch= 50
         ) 
-    st.write( pdk.Deck(layers=[layer], initial_view_state=view_state))
+    r = pdk.Deck(layers=[layer], initial_view_state=view_state)
+    st.write(r)
 
         
-    
-
 #LAYING OUT THE TOP SECTION OF THE APP
 row1_1, row1_2 = st.beta_columns((2,3))
 
@@ -102,6 +118,7 @@ newark = [40.7090, -74.1805]
 zoom_level = 12
 midpoint = (np.average(data["lat"]), np.average(data["lon"]))
 
+
 with row2_1:
     st.write("**All New York City from %i:00 and %i:00**" % (hour_selected, (hour_selected + 1) % 24))
     map(data, midpoint[0], midpoint[1], 11)
@@ -118,17 +135,20 @@ with row2_4:
     st.write("**Newark Airport**")
     map(data, newark[0],newark[1], zoom_level)
 
-# FILTERING DATA FOR THE HISTOGRAM
-filtered = data[
-    (data[DATE_TIME].dt.hour >= hour_selected) & (data[DATE_TIME].dt.hour < (hour_selected + 1))
-    ]
-
-hist = np.histogram(filtered[DATE_TIME].dt.minute, bins=60, range=(0, 60))[0]
-
-chart_data = pd.DataFrame({"minute": range(60), "pickups": hist})
 
 
-# LAYING OUT THE HISTOGRAM SECTION
+
+# # FILTERING DATA FOR THE HISTOGRAM
+# filtered = data[
+#     (data[DATE_TIME].dt.hour >= hour_selected) & (data[DATE_TIME].dt.hour < (hour_selected + 1))
+#     ]
+
+# hist = np.histogram(filtered[DATE_TIME].dt.minute, bins=60, range=(0, 60))[0]
+
+# chart_data = pd.DataFrame({"minute": range(60), "pickups": hist})
+
+
+## LAYING OUT THE HISTOGRAM SECTION
 
 # st.write("")
 
