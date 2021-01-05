@@ -23,6 +23,8 @@ import pydeck as pdk
 import os
 import time
 import base64
+import datetime as dt
+import calendar 
 
 from dotenv import load_dotenv
 # .env file to environment
@@ -50,8 +52,8 @@ def get_table_download_link(df):
     href = f'<a href="data:file/csv;base64,{b64}" download="myfilename.csv">Download data</a>'
     return href
 
-
-@st.cache(persist=True)
+@st.cache(allow_output_mutation=True, persist=True)
+#@st.cache(persist=True)
 def load_data(nrows):
     data = pd.read_csv(DATA_URL, nrows=nrows)
     lowercase = lambda x: str(x).lower()
@@ -59,10 +61,19 @@ def load_data(nrows):
     data[DATE_TIME] = pd.to_datetime(data[DATE_TIME])
     return data
 
+# LINK FOR DOWNLOADING DATA
+st.markdown(get_table_download_link(load_data(100000)), unsafe_allow_html=True)
+
 data = load_data(100000)
 
-# LINK FOR DOWNLOADING DATA
-st.markdown(get_table_download_link(data), unsafe_allow_html=True)
+# FEATURE ENGINEERING
+data['date/time']=  pd.to_datetime(data['date/time'])
+data['year'] = data['date/time'].dt.year
+data['month'] = data['date/time'].dt.month
+data['day'] = data['date/time'].dt.day
+data['hour'] = data['date/time'].dt.hour
+data['dayofweek'] =  data['date/time'].dt.strftime('%a') 
+#data['dayofweek_encoded'] = data['date/time'].dt.dayofweek # dayofweek
 
 
 # CREATING FUNCTION FOR MAPS
@@ -88,16 +99,21 @@ def map(data, lat, lon, zoom):
     r = pdk.Deck(layers=[layer], initial_view_state=view_state)
     st.write(r)
 
-        
+
 #LAYING OUT THE TOP SECTION OF THE APP
-row1_1, row1_2 = st.beta_columns((2,3))
+st.title("NYC Uber Ridesharing Data")
+row1_1, row1_2, row1_3 = st.beta_columns((2,2,3))
 
 
 with row1_1:
-    st.title("NYC Uber Ridesharing Data")
     hour_selected = st.slider("Select hour of pickup", 0, 23)
 
 with row1_2:
+    dayofweek_selected  = st.multiselect('Select day(s) of week',   
+                                         options= ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], 
+                                          default= ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat','Sun'])
+
+with row1_3:
     st.write(
     """
     ##
@@ -106,7 +122,9 @@ with row1_2:
     """)
 
 # FILTERING DATA BY HOUR SELECTED
-data = data[data[DATE_TIME].dt.hour == hour_selected]
+data = data[data[DATE_TIME].dt.hour == hour_selected] 
+data = data[data['dayofweek'].isin(dayofweek_selected)]
+
 
 # LAYING OUT THE MIDDLE SECTION OF THE APP WITH THE MAPS
 row2_1, row2_2, row2_3, row2_4 = st.beta_columns((2,1,1,1))
