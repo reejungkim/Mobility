@@ -16,10 +16,14 @@
 """An example of showing geographic data."""
 
 import streamlit as st
+import pydeck as pdk
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 import pandas as pd
 import numpy as np
 import altair as alt
-import pydeck as pdk
+
 import os
 import time
 import base64
@@ -38,9 +42,9 @@ st.set_page_config(layout='wide')
 
 # LOADING DATA
 DATE_TIME = "date/time"
-DATA_URL = (
-    "http://s3-us-west-2.amazonaws.com/streamlit-demo-data/uber-raw-data-sep14.csv.gz"
-)
+DATA_URL = "http://s3-us-west-2.amazonaws.com/streamlit-demo-data/uber-raw-data-sep14.csv.gz"
+#COMMUTE_DATA_URL = "https://raw.githubusercontent.com/ajduberstein/sf_public_data/master/bay_area_commute_routes.csv"
+
 
 def get_table_download_link(df):
     """Generates a link allowing the data in a given panda dataframe to be downloaded
@@ -80,7 +84,7 @@ data['dayofweek'] =  data['date/time'].dt.strftime('%a')
 
 def map(data, lat, lon, zoom):
     layer = pdk.Layer(
-        'HexagonLayer',
+        'HexagonLayer', #'HeatmapLayer',
         data,
         get_position='[lon, lat]',
         radius = 120,
@@ -97,7 +101,9 @@ def map(data, lat, lon, zoom):
         pitch= 50
         ) 
     r = pdk.Deck(layers=[layer], initial_view_state=view_state)
-    st.write(r)
+    return r
+    #st.write(r)
+
 
 
 #LAYING OUT THE TOP SECTION OF THE APP
@@ -107,11 +113,13 @@ row1_1, row1_2, row1_3 = st.beta_columns((2,2,3))
 
 with row1_1:
     hour_selected = st.slider("Select hour of pickup", 0, 23)
+    data = data[data[DATE_TIME].dt.hour == hour_selected] 
 
 with row1_2:
     dayofweek_selected  = st.multiselect('Select day(s) of week',   
                                          options= ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], 
                                           default= ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat','Sun'])
+    data = data[data['dayofweek'].isin(dayofweek_selected)]
 
 with row1_3:
     st.write(
@@ -120,10 +128,6 @@ with row1_3:
     Examining how Uber pickups vary over time in New York City's and at its major regional airports.
     By sliding the slider on the left you can view different slices of time and explore different transportation trends.
     """)
-
-# FILTERING DATA BY HOUR SELECTED
-data = data[data[DATE_TIME].dt.hour == hour_selected] 
-data = data[data['dayofweek'].isin(dayofweek_selected)]
 
 
 # LAYING OUT THE MIDDLE SECTION OF THE APP WITH THE MAPS
@@ -139,19 +143,19 @@ midpoint = (np.average(data["lat"]), np.average(data["lon"]))
 
 with row2_1:
     st.write("**All New York City from %i:00 and %i:00**" % (hour_selected, (hour_selected + 1) % 24))
-    map(data, midpoint[0], midpoint[1], 11)
+    st.write(map(data, midpoint[0], midpoint[1], 11))
 
 with row2_2:
     st.write("**La Guardia Airport**")
-    map(data, la_guardia[0],la_guardia[1], zoom_level)
+    st.write(map(data, la_guardia[0],la_guardia[1], zoom_level))
 
 with row2_3:
     st.write("**JFK Airport**")
-    map(data, jfk[0],jfk[1], zoom_level)
+    st.write(map(data, jfk[0],jfk[1], zoom_level))
 
 with row2_4:
     st.write("**Newark Airport**")
-    map(data, newark[0],newark[1], zoom_level)
+    st.write(map(data, newark[0],newark[1], zoom_level))
 
 
 
