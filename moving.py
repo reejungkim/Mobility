@@ -24,7 +24,6 @@ import calendar
 # geolocator = Nominatim(user_agent="n/a")
 
 
-
 from dotenv import load_dotenv
 # .env file to environment
 #load_dotenv()
@@ -63,10 +62,10 @@ def load_data(nrows):
 #     return location.address
 
 # LINK FOR DOWNLOADING DATA
-st.markdown(get_table_download_link(load_data(100000)), unsafe_allow_html=True)
+st.markdown(get_table_download_link(load_data(1000)), unsafe_allow_html=True)
 
-df = load_data(100000)
-#df['from'] = df.apply(lambda x: getAddress(x.lat_w, x.lng_w), axis=1)
+df = load_data(1000)
+# df['from'] = df.apply(lambda x: getAddress(x.lat_w, x.lng_w), axis=1)
 
 
 # MAP
@@ -95,7 +94,8 @@ view_state = pdk.ViewState(
     zoom=8,
 )
 
-TOOLTIP_TEXT = {"html": " Home of commuter in red; work location in green"}
+TOOLTIP_TEXT = {"html": "({lng_h}, {lat_h}) to ({lng_w}, {lat_w})" } #" Home of commuter in red; work location in green"}
+
 
 r = pdk.Deck(arc_layer, 
              initial_view_state=view_state, 
