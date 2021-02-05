@@ -16,6 +16,11 @@
 """An example of showing geographic data."""
 
 import streamlit as st
+from multiapp import MultiApp
+import moving # import your app modules here
+
+app = MultiApp()
+
 import pydeck as pdk
 #import matplotlib.pyplot as plt
 #import seaborn as sns
@@ -29,6 +34,8 @@ import time
 import base64
 import datetime as dt
 import calendar 
+
+
 
 from dotenv import load_dotenv
 # .env file to environment
@@ -160,30 +167,7 @@ with row2_4:
 
 
 
-# # FILTERING DATA FOR THE HISTOGRAM
-# filtered = data[
-#     (data[DATE_TIME].dt.hour >= hour_selected) & (data[DATE_TIME].dt.hour < (hour_selected + 1))
-#     ]
 
-# hist = np.histogram(filtered[DATE_TIME].dt.minute, bins=60, range=(0, 60))[0]
-
-# chart_data = pd.DataFrame({"minute": range(60), "pickups": hist})
-
-
-## LAYING OUT THE HISTOGRAM SECTION
 
 # st.write("")
 
-# st.write("**Breakdown of rides per minute between %i:00 and %i:00**" % (hour_selected, (hour_selected + 1) % 24))
-
-# st.altair_chart(alt.Chart(chart_data)
-#     .mark_area(
-#         interpolate='step-after',
-#     ).encode(
-#         x=alt.X("minute:Q", scale=alt.Scale(nice=False)),
-#         y=alt.Y("pickups:Q"),
-#         tooltip=['minute', 'pickups']
-#     ).configure_mark(
-#         opacity=0.5,
-#         color='red'
-#     ), use_container_width=True)
