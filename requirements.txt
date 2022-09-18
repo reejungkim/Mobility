@@ -4,3 +4,4 @@ numpy==1.22.0
 scipy==1.2.1
 matplotlib==3.3.1
 python-dotenv==0.15.0  
+pydeck==0.7.1
