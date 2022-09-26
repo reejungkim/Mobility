@@ -1,6 +1,3 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
 
 # -*- coding: utf-8 -*-
 # Copyright 2018-2019 Streamlit Inc.
@@ -19,34 +16,30 @@ import numpy as np
 
 """An example of showing geographic data."""
 
-import streamlit as st
-
-
+from dotenv import load_dotenv
+import calendar
+import datetime as dt
+import base64
+import time
+import os
+import altair as alt
+import numpy as np
+import pandas as pd
 import pydeck as pdk
+import streamlit as st
+# SETTING PAGE CONFIG TO WIDE MODE
+st.set_page_config(layout='wide', page_title='reejungkim')
+
 #import matplotlib.pyplot as plt
 #import seaborn as sns
 
-import pandas as pd
-import numpy as np
-import altair as alt
 
-import os
-import time
-import base64
-import datetime as dt
-import calendar
-
-
-from dotenv import load_dotenv
 # .env file to environment
 # load_dotenv()
 load_dotenv(verbose=True)
 token = os.getenv('MAPBOX_API_KEY')
 
-# SETTING PAGE CONFIG TO WIDE MODE
-st.set_page_config(layout='wide')
 
-st.title('reejungkimg')
 # LOADING DATA
 DATE_TIME = "date/time"
 DATA_URL = "http://s3-us-west-2.amazonaws.com/streamlit-demo-data/uber-raw-data-sep14.csv.gz"
@@ -117,7 +110,7 @@ def map(data, lat, lon, zoom):
 
 # LAYING OUT THE TOP SECTION OF THE APP
 st.title("NYC Uber Ridesharing Data")
-row1_1, row1_2, row1_3 = st.beta_columns((2, 2, 3))
+row1_1, row1_2, row1_3 = st.columns((2, 2, 3))
 
 
 with row1_1:
@@ -141,7 +134,7 @@ with row1_3:
 
 
 # LAYING OUT THE MIDDLE SECTION OF THE APP WITH THE MAPS
-row2_1, row2_2, row2_3, row2_4 = st.beta_columns((2, 1, 1, 1))
+row2_1, row2_2, row2_3, row2_4 = st.columns((2, 1, 1, 1))
 
 # SETTING THE ZOOM LOCATIONS FOR THE AIRPORTS
 la_guardia = [40.7900, -73.8700]
