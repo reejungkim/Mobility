@@ -2,7 +2,7 @@
 
 
 ## Interactive dashboard
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/reejungkim/mobility/main/app.py)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://reejungkim12-streamlit-app-5jar6g.streamlitapp.com/)
 ![](https://github.com/reejungkim/Mobility/blob/main/img/demo.gif)
 
 ## commute map
