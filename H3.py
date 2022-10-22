@@ -19,25 +19,24 @@ import pydeck as pdk
 from h3 import h3
 #h3_key = h3.geo_to_h3(latitude, longitude, level)
 #h3.h3_to_geo_boundary(h3_address=h3_key)
-#h3.h3_to_geo_boundary(h3_address=h3_key)
 
-
-
+# h3_address = h3.geo_to_h3(37.3615593, -122.0553238, 5)
+# hex_center_coordinates = h3.h3_to_geo(h3_address)
+# boundary = h3.h3_to_geo_boundary(h3_address)
 
 # 2014 locations of car accidents in the UK
 UK_ACCIDENTS_DATA = ('https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/3d-heatmap/heatmap-data.csv')
 data = pd.read_csv(UK_ACCIDENTS_DATA)
 
-
-h3_address = h3.geo_to_h3(37.3615593, -122.0553238, 5)
-hex_center_coordinates = h3.h3_to_geo(h3_address)
-boundary = h3.h3_to_geo_boundary(h3_address)
-
-
 def lat_lng_to_h3(row):
     return h3.geo_to_h3(row['lat'], row['lng'], 11)
 
-data['h3'] = data.apply(lat_lng_to_h3, axis=1)
+def hex_center(row):
+    return h3.h3_to_geo_boundary(row['h3_key'])
+
+data['h3_key'] = data.apply(lat_lng_to_h3, axis=1)
+#data['boundary'] = data.apply(hex_center, axis=1)
+
 
 def map(data, lat, lon, zoom):
     layer= pdk.Layer(
